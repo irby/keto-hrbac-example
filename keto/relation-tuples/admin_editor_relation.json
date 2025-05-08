@@ -1,0 +1,10 @@
+{
+    "namespace": "role",
+    "object": "editor",
+    "relation": "member",
+    "subject_set": {
+        "namespace": "role",
+        "object": "admin",
+        "relation": "member"
+    }
+}

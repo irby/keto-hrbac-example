@@ -1,0 +1,10 @@
+{
+    "namespace": "document",
+    "object": "480158d4-0031-4412-9453-1bb0cdf76104",
+    "relation": "edit",
+    "subject_set": {
+        "namespace": "role",
+        "object": "editor",
+        "relation": "member"
+    }
+}

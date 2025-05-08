@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # postgres-keto:
+  #   image: postgres:13
+  #   container_name: ory-keto-example--postgres
+  #   environment:
+  #     POSTGRES_USER: keto
+  #     POSTGRES_PASSWORD: secret
+  #     POSTGRES_DB: keto
+
+  keto:
+    image: oryd/keto:v0.12.0
+    ports:
+      - "4466:4466"
+      - "4467:4467"
+    command: serve -c /home/ory/keto.yml
+    volumes:
+      - type: bind
+        source: ./keto/config
+        target: /home/ory
+    # environment:
+    # # Let's keep Ory Keto in-memory for now to make it easy to configure and test
+    #   - DSN=postgres://keto:secret@ory-keto-example--postgres:5432/keto?sslmode=disable
+    restart: unless-stopped
+
+  keto-init:
+    image: oryd/keto:v0.12.0
+    # image: oryd/keto:v0.6.0
+    command: relation-tuple create --insecure-disable-transport-security --insecure-skip-hostname-verification /home/ory/relation-tuples
+    volumes:
+      - type: bind
+        source: ./keto
+        target: /home/ory
+    environment:
+      - KETO_WRITE_REMOTE=keto:4467
+    restart: on-failure
+
+  example-app:
+    build:
+      context: .
+    environment:
+      - KETO_READ_ADDR=keto:4466
+      - KETO_WRITE_ADDR=keto:4467
+    ports:
+      - 3000:3000
+    depends_on:
+      - keto
