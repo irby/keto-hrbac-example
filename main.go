@@ -43,10 +43,10 @@ func main() {
 	ctx := context.Background()
 
 	// Our actors who will be accessing our document
-	alice := NewSubjectId("alice")
-	bob := NewSubjectId("bob")
-	charlie := NewSubjectId("charlie")
-	eve := NewSubjectId("eve")
+	alice := NewSubject("user", "alice", "member")
+	bob := NewSubject("user", "bob", "member")
+	charlie := NewSubject("user", "charlie", "member")
+	eve := NewSubject("user", "eve", "member")
 
 	// An admin role subject that we will assign access to the document object
 	admin := NewSubject("role", "admin", "member")
@@ -55,7 +55,7 @@ func main() {
 	documentId := "480158d4-0031-4412-9453-1bb0cdf76104"
 
 	// Run cleanup step before exiting the application at any point
-	defer deleteAdminAccess(ctx, documentId, admin)
+	defer cleanup(ctx, documentId, admin)
 
 	// Allow enough time for the Keto server to be seeded before execution
 	time.Sleep(2 * time.Second)
@@ -172,7 +172,7 @@ func main() {
 	}
 }
 
-func deleteAdminAccess(ctx context.Context, documentId string, admin *rts.Subject) {
+func cleanup(ctx context.Context, documentId string, admin *rts.Subject) {
 	// Cleanup step: Removing admin access to the document so we can repeat our test
 	ok, err := ketoClient.DeleteRelation(ctx, "document", documentId, "admin", admin)
 	assertResult(ok, true, err, "Removing admin access to document")
@@ -181,13 +181,13 @@ func deleteAdminAccess(ctx context.Context, documentId string, admin *rts.Subjec
 func assertResult(result bool, expected bool, err error, context string) bool {
 	log.Printf("Evaluating test context: %s\n", context)
 	if err != nil {
-		log.Println(fmt.Sprintf("An unexpected error occurred with the request. Error: %w", err))
+		log.Println(fmt.Sprintf("FAIL: An unexpected error occurred with the request. Error: %s", err.Error()))
 		return false
 	}
 	if result != expected {
-		log.Println(fmt.Sprintf("Error: Expected %t, Received: %t.", expected, result))
+		log.Println(fmt.Sprintf("FAIL: Expected %t, Received: %t.", expected, result))
 		return false
 	}
-	log.Println("Test evalauted successfully.")
+	log.Println("PASS")
 	return true
 }

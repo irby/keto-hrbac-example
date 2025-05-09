@@ -18,3 +18,5 @@ namespaces:
     name: document
   - id: 1
     name: role
+  - id: 2
+    name: user

@@ -74,14 +74,6 @@ func NewSubject(namespace string, subjectId string, relation string) *rts.Subjec
 	}
 }
 
-func NewSubjectId(subjectId string) *rts.Subject {
-	return &rts.Subject{
-		Ref: &rts.Subject_Id{
-			Id: subjectId,
-		},
-	}
-}
-
 func (k *Keto) CreateRelation(ctx context.Context, namespace string, object string, relation string, subject *rts.Subject) (bool, error) {
 	var records []*rts.RelationTuple
 	rec := rts.RelationTuple{
