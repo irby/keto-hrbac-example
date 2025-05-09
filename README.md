@@ -1,4 +1,4 @@
-# Example Ory Hydra HRBAC Implementation
+# Example Ory Keto HRBAC Implementation
 
 ## Requirements
 - Docker ([link](https://www.docker.com/get-started/))
@@ -28,9 +28,10 @@ The `keto` container is the erver that runs [Ory Keto](https://www.ory.sh/keto/)
 The configuration for the Keto instance can be found within [./keto/config/keto.yml](./keto/config/keto.yml). We configure the Keto instance with the following:
 
 - The read/write servers listen on ports 4467/4468, respectively.
-- The server is configured with two namespaces:
+- The server is configured with 3 namespaces:
     - document
     - role
+    - user
 
 Namespaces are static constructs in Ory Keto, so they cannot be modified outside of the Keto configuration.
 
@@ -60,7 +61,12 @@ Noticably, there is no specific payload involving an admin relationship to the d
 
 #### Example App
 
-TODO
+This small Go application uses the Keto SDK to do the following:
+- Add user Alice to the admin role
+- Add user Bob to the editor role
+- Add user Charlie to the viewer role
+- Asserts access of the admin, editor and viewer roles on the document 480158d4-0031-4412-9453-1bb0cdf76104, with various checks on privileges (admin, edit, view)
+- Asserts that Eve, who is not given a role, does not have access to document 480158d4-0031-4412-9453-1bb0cdf76104
 
 ### Hierarchical Role-Based Access Control
 
